@@ -6,3 +6,6 @@ psycopg2-binary
 Pillow
 django-crispy-forms
 crispy-bootstrap5
+pandas
+openpyxl
+reportlab
