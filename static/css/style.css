@@ -1,0 +1,190 @@
+/* static/css/style.css - Tema Elegante Biblioteca Digital */
+
+/* Fuentes elegantes */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:wght@300;400;700;900&display=swap');
+
+/* Paleta y variables */
+:root {
+  --primary: #2D4A3A; /* verde biblioteca */
+  --primary-dark: #203529;
+  --primary-light: #3E6A54;
+  --secondary: #556B2F; /* oliva sobrio */
+  --accent: #C8A97E; /* dorado suave */
+  --success: #2E7D32;
+  --warning: #B08968;
+
+  --bg: #F7F5F2; /* papel */
+  --surface: #FFFFFF; /* tarjeta */
+  --border: #E5E1DA;
+
+  --text-primary: #2B2B2B;
+  --text-secondary: #5A5A5A;
+  --text-muted: #8A8A8A;
+
+  --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: 'Merriweather', Georgia, serif;
+
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+}
+
+/* Reset básico */
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  display: flex; flex-direction: column; min-height: 100vh;
+  font-family: var(--font-primary);
+  color: var(--text-primary);
+  background: var(--bg);
+  line-height: 1.6;
+}
+.main-content { flex: 1; }
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  color: var(--text-primary);
+  letter-spacing: 0.01em;
+}
+
+/* Navbar clara y elegante */
+.navbar { background-color: var(--surface); border-bottom: 1px solid var(--border); }
+.navbar-brand {
+  font-family: var(--font-display); font-weight: 700; color: var(--primary);
+}
+.navbar-brand .fa-book-reader { color: var(--accent); margin-right: .5rem; }
+.navbar-nav .nav-link {
+  color: var(--text-secondary); padding: .5rem .75rem; border-radius: var(--radius-sm);
+}
+.navbar-nav .nav-link:hover { color: var(--primary); background: rgba(45,74,58,0.06); }
+.navbar-sticky { position: sticky; top: 0; z-index: 1020; backdrop-filter: saturate(1.1) blur(2px); }
+.navbar-elevated { box-shadow: var(--shadow-sm); }
+.navbar-nav .nav-link.active { color: var(--primary); background: rgba(45,74,58,0.10); font-weight: 600; }
+.navbar-search .input-group { width: clamp(220px, 24vw, 360px); }
+.navbar-search .input-group-text { border: 1px solid var(--border); border-right: none; color: var(--text-muted); }
+.navbar-search .form-control { border-left: none; }
+.btn-cta { background: var(--accent); color: #1f2937; border: 1px solid #e6d7c0; box-shadow: var(--shadow-sm); }
+.btn-cta:hover { background: #b89263; color: #111827; }
+.dropdown-menu { border-radius: var(--radius-sm); border: 1px solid var(--border); box-shadow: var(--shadow-md); }
+.dropdown-item { color: var(--text-secondary); }
+.dropdown-item:hover { background-color: rgba(45,74,58,0.06); color: var(--primary); }
+
+/* Hero sobrio y luminoso */
+.hero-section { background: linear-gradient(180deg, #FBFAF7 0%, #F3EFE9 100%); padding: 80px 0; }
+.hero-section h1 { font-weight: 900; font-size: clamp(2.2rem, 5vw, 3.6rem); color: var(--primary); }
+.hero-section .lead { color: var(--text-secondary); max-width: 640px; margin: 0 auto 2rem; }
+.hero-icon-container {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 40px; box-shadow: var(--shadow-md);
+}
+.hero-icon-container .fas { color: var(--accent); font-size: 6rem; }
+
+/* Botones personalizados */
+.custom-btn-primary,
+.custom-btn-outline {
+  font-family: var(--font-primary); font-weight: 600; padding: .9rem 2rem;
+  border-radius: var(--radius-md); transition: all .2s ease; font-size: 1.05rem;
+}
+.custom-btn-primary { background-color: var(--primary); color: #fff; box-shadow: var(--shadow-sm); }
+.custom-btn-primary:hover { background-color: var(--primary-dark); transform: translateY(-1px); }
+.custom-btn-outline { border: 2px solid var(--primary); color: var(--primary); background: transparent; }
+.custom-btn-outline:hover { background-color: var(--primary); color: #fff; }
+
+/* Sección de características */
+#featured-3 { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+#featured-3 h2 { color: var(--primary); font-weight: 900; }
+.feature {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md);
+  padding: 1.5rem; box-shadow: var(--shadow-sm); transition: box-shadow .2s ease, transform .2s ease;
+}
+.feature:hover { box-shadow: var(--shadow-lg); transform: translateY(-4px); }
+.feature-icon { width: 64px; height: 64px; border-radius: 50%; background: #FAF7F2; border: 1px solid var(--border); color: var(--accent); }
+.feature-icon i { font-size: 28px; }
+.feature-icon.catalogo { color: var(--primary); }
+.feature-icon.prestamos { color: var(--success); }
+.feature-icon.administracion { color: #0ea5b7; /* acento frío para analítica */ }
+.feature h2 { font-size: 1.4rem; margin-bottom: .5rem; }
+.feature p { color: var(--text-secondary); }
+.icon-link { color: var(--primary); font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; }
+.icon-link:hover { color: var(--primary-dark); }
+
+/* Meta items en detalle de libro */
+.meta-item { display: flex; align-items: center; color: var(--text-primary); }
+.meta-item i { color: var(--primary); }
+
+/* Tarjetas elegantes (sin forzar fondo para compatibilidad con .bg-*) */
+.card { border: 1px solid var(--border); border-radius: var(--radius-md); box-shadow: var(--shadow-sm); }
+.card:hover { box-shadow: var(--shadow-md); }
+.card-header { background: #FAF8F4; border-bottom: 1px solid var(--border); }
+.card-title { color: var(--primary); }
+
+/* Dashboard: Reportes */
+.report-card { border-left: 4px solid var(--accent); }
+.report-buttons .btn { min-width: 220px; }
+/* Mejoras de responsividad en botones de reportes */
+.report-buttons { flex-wrap: wrap; }
+@media (max-width: 768px) {
+  .report-buttons .btn { min-width: 100%; }
+}
+
+/* Dashboard: KPI cards */
+.kpi-card .kpi-label { font-weight: 600; color: var(--text-secondary); }
+.kpi-card .kpi-value { font-family: var(--font-display); font-weight: 900; font-size: 2.2rem; color: var(--primary); line-height: 1; }
+.kpi-icon { width: 56px; height: 56px; border-radius: 50%; background: #FAF7F2; border: 1px solid var(--border); color: var(--accent); display: inline-flex; align-items: center; justify-content: center; }
+.kpi-icon i { font-size: 22px; }
+
+/* Dashboard: Charts */
+.chart-card canvas { max-height: 320px; }
+
+/* Formularios */
+.form-control, .form-select {
+  background: var(--surface); border: 1px solid var(--border); color: var(--text-primary);
+  border-radius: var(--radius-sm); padding: .6rem .9rem;
+}
+.form-control::placeholder { color: var(--text-muted); }
+.form-control:focus, .form-select:focus {
+  border-color: var(--primary); box-shadow: 0 0 0 .2rem rgba(45,74,58,0.15);
+}
+
+/* Alertas modernas */
+.modern-alert { border-radius: var(--radius-sm); border: 1px solid var(--border); box-shadow: var(--shadow-sm); }
+.alert-success { background: #F1F7F3; border-color: #D7EADA; color: #264D33; }
+.alert-danger { background: #FDF3F1; border-color: #F1D3CF; color: #712B26; }
+.alert-warning { background: #FBF6EE; border-color: #EADCC8; color: #5B4A36; }
+.alert-info { background: #F2F7FB; border-color: #D7E4F2; color: #1F3B57; }
+
+/* Footer */
+.footer { background: var(--surface); border-top: 1px solid var(--border); color: var(--text-secondary); }
+.footer-link { color: var(--text-secondary); text-decoration: none; }
+.footer-link:hover { color: var(--primary); }
+
+/* Topbar */
+.topbar { background: var(--surface); border-bottom: 1px solid var(--border); }
+.topbar .text-warning { color: var(--accent) !important; }
+
+/* Tablas */
+.table { background: var(--surface); }
+.table thead th { border-bottom: 2px solid var(--border); }
+.table-striped tbody tr:nth-of-type(odd) { background-color: #FBFAF7; }
+.table-hover tbody tr:hover { background-color: #F3EFE9; }
+
+/* Badges personalizados */
+.badge-disponible { background: #2E7D32; color: #fff; }
+.badge-prestado { background: var(--primary); color: #fff; }
+.badge-retrasado { background: #B00020; color: #fff; }
+
+/* Scrollbar sutil */
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: #F1EEE8; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 5px; }
+::-webkit-scrollbar-thumb:hover { background: #b89263; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .hero-section { padding: 60px 0; }
+  .hero-icon-container { padding: 28px; }
+}

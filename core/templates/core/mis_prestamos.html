@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="mb-0"><i class="fas fa-hand-holding me-2 text-primary"></i>Mis Préstamos</h1>
+    <a href="{% url 'libro_list' %}" class="btn custom-btn-outline"><i class="fas fa-book me-2"></i>Volver al Catálogo</a>
+  </div>
+  <p class="text-secondary">Consulta tus préstamos activos y su fecha de devolución.</p>
+
+  {% if prestamos %}
+    {% for prestamo in prestamos %}
+      <div class="card mb-3">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <strong>{{ prestamo.libro.titulo }}</strong>
+          {% if prestamo.esta_retrasado %}
+            <span class="badge badge-retrasado">Retrasado</span>
+          {% elif prestamo.fecha_devolucion_real %}
+            <span class="badge bg-secondary">Devuelto</span>
+          {% else %}
+            <span class="badge badge-prestado">En curso</span>
+          {% endif %}
+        </div>
+        <div class="card-body">
+          <p class="mb-1">
+            <strong>Pedido el:</strong> {{ prestamo.fecha_prestamo|date:"Y-m-d H:i" }}
+          </p>
+          <p class="mb-0">
+            <strong>Devolver antes del:</strong> {{ prestamo.fecha_devolucion_prevista|date:"Y-m-d" }}
+          </p>
+          {% if prestamo.fecha_devolucion_real %}
+            <p class="text-muted mt-2">Devuelto el: {{ prestamo.fecha_devolucion_real|date:"Y-m-d" }}</p>
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <div class="card">
+      <div class="card-body text-center py-5">
+        <div class="mb-2"><i class="fas fa-hand-holding text-secondary" style="font-size: 2rem;"></i></div>
+        <h5 class="mb-1">Aún no tienes préstamos</h5>
+        <p class="text-muted mb-3">Explora el catálogo y solicita un libro disponible.</p>
+        <a href="{% url 'libro_list' %}" class="btn custom-btn-primary"><i class="fas fa-book me-2"></i>Ir al Catálogo</a>
+      </div>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

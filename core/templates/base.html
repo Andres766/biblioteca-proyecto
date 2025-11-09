@@ -1,0 +1,227 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{% block title %}BiblioNexus{% endblock %}</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:wght@300;400;700;900&display=swap" rel="stylesheet">
+    
+    <!-- CSS Personalizado -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Topbar -->
+    <div class="topbar py-2">
+        <div class="container d-flex justify-content-between align-items-center">
+            <span class="small text-muted">
+                <i class="fas fa-feather-alt me-2 text-warning"></i>
+                Explora, reserva y aprende — tu portal BiblioNexus.
+            </span>
+            <span class="small">
+                <i class="fas fa-clock me-2 text-secondary"></i>
+                Abierta 24/7
+            </span>
+        </div>
+    </div>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white navbar-sticky navbar-elevated">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <i class="fas fa-book-reader"></i> BiblioNexus
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <!-- Búsqueda rápida del catálogo -->
+                <form class="d-flex ms-lg-4 my-3 my-lg-0 navbar-search" action="{% url 'libro_list' %}" method="get">
+                    <div class="input-group">
+                        <span class="input-group-text bg-transparent"><i class="fas fa-search"></i></span>
+                        <input class="form-control" type="search" name="q" value="{{ request.GET.q|default:'' }}" placeholder="Buscar títulos, autores..." aria-label="Buscar">
+                    </div>
+                </form>
+
+                <ul class="navbar-nav ms-auto align-items-lg-center">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'home' %}">
+                            <i class="fas fa-home me-1"></i> Inicio
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'libro_list' or request.resolver_match.url_name == 'libro_detail' or request.resolver_match.url_name == 'libro_create' or request.resolver_match.url_name == 'libro_update' %}active{% endif %}" href="{% url 'libro_list' %}">
+                            <i class="fas fa-book me-1"></i> Catálogo
+                        </a>
+                    </li>
+                    
+                    {% if user.is_authenticated %}
+                        {% if user.rol == 'bibliotecario' %}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownBibliotecario" 
+                                   role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-cog me-1"></i> Administración
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="navbarDropdownBibliotecario">
+                                    <li>
+                                        <a class="dropdown-item" href="{% url 'dashboard_bibliotecario' %}">
+                                            <i class="fas fa-chart-line me-2"></i> Dashboard
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="{% url 'libro_create' %}">
+                                            <i class="fas fa-plus me-2"></i> Agregar Libro
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="{% url 'gestion_prestamos' %}">
+                                            <i class="fas fa-tasks me-2"></i> Gestionar Préstamos
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="{% url 'autor_list' %}">
+                                            <i class="fas fa-user-pen me-2"></i> Gestionar Autores
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="{% url 'categoria_list' %}">
+                                            <i class="fas fa-tag me-2"></i> Gestionar Categorías
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <a class="dropdown-item" href="{% url 'reporte_libros_excel' %}">
+                                            <i class="fas fa-file-excel me-2"></i> Exportar Libros
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="{% url 'reporte_prestamos_pdf' %}">
+                                            <i class="fas fa-file-pdf me-2"></i> Exportar Préstamos
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="{% url 'reporte_libros_csv' %}">
+                                            <i class="fas fa-file-csv me-2"></i> Libros (CSV)
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="{% url 'reporte_prestamos_csv' %}">
+                                            <i class="fas fa-file-csv me-2"></i> Préstamos (CSV)
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <!-- Acceso rápido: nuevo libro -->
+                            <li class="nav-item d-none d-lg-block">
+                                <a href="{% url 'libro_create' %}" class="btn btn-sm btn-cta ms-lg-2">
+                                    <i class="fas fa-plus me-1"></i> Nuevo Libro
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link {% if request.resolver_match.url_name == 'mis_prestamos' %}active{% endif %}" href="{% url 'mis_prestamos' %}">
+                                    <i class="fas fa-list-alt me-1"></i> Mis Préstamos
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {% if request.resolver_match.url_name == 'mis_reservas' %}active{% endif %}" href="{% url 'mis_reservas' %}">
+                                    <i class="fas fa-bell me-1"></i> Mis Reservas
+                                </a>
+                            </li>
+                        {% endif %}
+                        
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownUser" 
+                               role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user-circle me-1"></i> {{ user.username }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownUser">
+                                <li>
+                                    <a class="dropdown-item disabled" href="#">
+                                        <small class="text-muted">{{ user.get_rol_display }}</small>
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'logout' %}">
+                                        <i class="fas fa-sign-out-alt me-2"></i> Cerrar Sesión
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'login' %}active{% endif %}" href="{% url 'login' %}">
+                                <i class="fas fa-sign-in-alt me-1"></i> Iniciar Sesión
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'registrar' %}active{% endif %}" href="{% url 'registrar' %}">
+                                <i class="fas fa-user-plus me-1"></i> Registrarse
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mensajes de Django -->
+    {% if messages %}
+        <div class="container mt-4">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show modern-alert" role="alert">
+                    {% if message.tags == 'success' %}
+                        <i class="fas fa-check-circle me-2"></i>
+                    {% elif message.tags == 'error' %}
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                    {% elif message.tags == 'warning' %}
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                    {% elif message.tags == 'info' %}
+                        <i class="fas fa-info-circle me-2"></i>
+                    {% endif %}
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Contenido Principal -->
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer mt-auto py-4">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-12 text-center text-md-start">
+                    <p class="mb-0 text-secondary">
+                        <i class="fas fa-book-reader text-primary me-2"></i>
+                        <strong>BiblioNexus</strong> © 2025
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header d-flex align-items-center justify-content-between">
+          <h3 class="card-title mb-0">
+            {% if 'update' in request.path %}
+              <i class="fas fa-pen-to-square me-2 text-primary"></i> Editar Libro
+            {% else %}
+              <i class="fas fa-plus me-2 text-primary"></i> Añadir Nuevo Libro
+            {% endif %}
+          </h3>
+          <small class="text-muted">Completa los campos marcados con *</small>
+        </div>
+        <div class="card-body p-4">
+          <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="row g-4">
+              <!-- Columna izquierda: datos principales -->
+              <div class="col-lg-7">
+                {{ form.titulo|as_crispy_field }}
+                <div class="row g-3">
+                  <div class="col-md-6">{{ form.autor|as_crispy_field }}</div>
+                  <div class="col-md-6">{{ form.categoria|as_crispy_field }}</div>
+                </div>
+                <div class="row g-3">
+                  <div class="col-md-6">{{ form.isbn|as_crispy_field }}</div>
+                  <div class="col-md-6">{{ form.estado|as_crispy_field }}</div>
+                </div>
+                {{ form.resumen|as_crispy_field }}
+              </div>
+
+              <!-- Columna derecha: portada y preview -->
+              <div class="col-lg-5">
+                <label class="form-label">Vista previa de portada</label>
+                <div class="border rounded d-flex align-items-center justify-content-center bg-light mb-3" style="height: 220px;">
+                  <img id="preview-portada" src="" alt="Vista previa" style="max-height: 100%; max-width: 100%; display: none;" />
+                  <div id="placeholder-portada" class="text-center text-muted">
+                    <i class="fas fa-image mb-2" style="font-size: 2rem;"></i>
+                    <div>Selecciona un archivo o pega una URL</div>
+                  </div>
+                </div>
+                {{ form.portada|as_crispy_field }}
+                {{ form.portada_url|as_crispy_field }}
+                <small class="text-muted">Sube una imagen o pega una URL. Si ambas existen, se usará la subida.</small>
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-end gap-2 mt-3">
+              <a href="{% url 'libro_list' %}" class="btn custom-btn-outline">Cancelar</a>
+              <button type="submit" class="btn custom-btn-primary">Guardar Cambios</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    const fileInput = document.getElementById('id_portada');
+    const urlInput = document.getElementById('id_portada_url');
+    const preview = document.getElementById('preview-portada');
+    const placeholder = document.getElementById('placeholder-portada');
+
+    function showPreview(src) {
+      if (src) {
+        preview.src = src;
+        preview.style.display = 'block';
+        placeholder.style.display = 'none';
+      } else {
+        preview.style.display = 'none';
+        placeholder.style.display = 'block';
+      }
+    }
+
+    if (fileInput) {
+      fileInput.addEventListener('change', function() {
+        const file = this.files && this.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = e => showPreview(e.target.result);
+          reader.readAsDataURL(file);
+        } else {
+          showPreview('');
+        }
+      });
+    }
+
+    if (urlInput) {
+      urlInput.addEventListener('input', function() {
+        if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+          // Solo usar URL si no hay archivo seleccionado
+          showPreview(this.value);
+        }
+      });
+    }
+  })();
+</script>
+{% endblock %}

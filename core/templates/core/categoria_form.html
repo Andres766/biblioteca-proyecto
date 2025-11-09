@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h3 class="mb-0"><i class="fas fa-tag me-2 text-primary"></i>{% if object %}Editar Categoría{% else %}Nueva Categoría{% endif %}</h3>
+      <a href="{% url 'categoria_list' %}" class="btn btn-sm custom-btn-outline"><i class="fas fa-list me-1"></i>Ver listado</a>
+    </div>
+    <div class="card-body">
+      {% if form.errors %}
+        <div class="alert alert-danger">Por favor corrige los campos marcados.</div>
+      {% endif %}
+      <form method="post" novalidate>
+        {% csrf_token %}
+        <div class="mb-3">
+          <label for="id_nombre" class="form-label">Nombre</label>
+          {{ form.nombre }}
+          <div class="form-text">Nombre visible para los usuarios en el catálogo.</div>
+          {{ form.nombre.errors }}
+        </div>
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn custom-btn-primary"><i class="fas fa-save me-2"></i>Guardar</button>
+          <a href="{% url 'categoria_list' %}" class="btn custom-btn-outline">Cancelar</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

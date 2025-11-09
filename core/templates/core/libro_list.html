@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+      <h1 class="mb-0"><i class="fas fa-book me-2 text-primary"></i>Catálogo de Libros</h1>
+      {% if user.is_authenticated and user.rol == 'bibliotecario' %}
+        <a href="{% url 'libro_create' %}" class="btn custom-btn-primary">Añadir Nuevo Libro</a>
+      {% endif %}
+  </div>
+  <p class="text-secondary mb-4">Explora el listado completo de títulos disponibles.</p>
+
+  <!-- Buscador y Filtros -->
+  <form method="get" class="card p-3 mb-4">
+    <div class="row g-3 align-items-end">
+      <div class="col-md-4">
+        <label for="q" class="form-label">Buscar</label>
+        <input type="text" id="q" name="q" class="form-control" placeholder="Título, ISBN o Autor" value="{{ selected.q }}">
+        <small class="text-muted">Pulsa Enter o el botón para filtrar.</small>
+      </div>
+      <div class="col-md-3">
+        <label for="categoria" class="form-label">Categoría</label>
+        <select id="categoria" name="categoria" class="form-select">
+          <option value="">Todas</option>
+          {% for c in categorias %}
+            <option value="{{ c.id }}" {% if selected.categoria == c.id|stringformat:'s' %}selected{% endif %}>{{ c.nombre }}</option>
+          {% endfor %}
+        </select>
+        <small class="text-muted">Filtra por género o temática.</small>
+      </div>
+      <div class="col-md-3">
+        <label for="autor" class="form-label">Autor</label>
+        <select id="autor" name="autor" class="form-select">
+          <option value="">Todos</option>
+          {% for a in autores %}
+            <option value="{{ a.id }}" {% if selected.autor == a.id|stringformat:'s' %}selected{% endif %}>{{ a.nombre }}</option>
+          {% endfor %}
+        </select>
+        <small class="text-muted">Filtra por autor específico.</small>
+      </div>
+      <div class="col-md-2">
+        <label for="estado" class="form-label">Estado</label>
+        <select id="estado" name="estado" class="form-select">
+          <option value="">Todos</option>
+          <option value="disponible" {% if selected.estado == 'disponible' %}selected{% endif %}>Disponible</option>
+          <option value="prestado" {% if selected.estado == 'prestado' %}selected{% endif %}>Prestado</option>
+          <option value="retrasado" {% if selected.estado == 'retrasado' %}selected{% endif %}>Retrasado</option>
+        </select>
+      </div>
+      <div class="col-12 d-flex gap-2">
+        <button type="submit" class="btn custom-btn-primary"><i class="fas fa-magnifying-glass me-2"></i>Buscar</button>
+        <a href="{% url 'libro_list' %}" class="btn custom-btn-outline">Limpiar</a>
+      </div>
+    </div>
+  </form>
+
+  <!-- Resumen de filtros y resultados -->
+  <div class="d-flex flex-wrap align-items-center justify-content-between mb-3">
+    <small class="text-muted">Resultados: {{ libros|length }}</small>
+    <div class="d-flex flex-wrap gap-2">
+      {% if selected.q %}
+        <span class="badge bg-secondary"><i class="fas fa-search me-1"></i>{{ selected.q }}</span>
+      {% endif %}
+      {% if selected.categoria %}
+        <span class="badge bg-secondary"><i class="fas fa-tag me-1"></i>
+          {% for c in categorias %}{% if c.id|stringformat:'s' == selected.categoria %}{{ c.nombre }}{% endif %}{% endfor %}
+        </span>
+      {% endif %}
+      {% if selected.autor %}
+        <span class="badge bg-secondary"><i class="fas fa-user-pen me-1"></i>
+          {% for a in autores %}{% if a.id|stringformat:'s' == selected.autor %}{{ a.nombre }}{% endif %}{% endfor %}
+        </span>
+      {% endif %}
+      {% if selected.estado %}
+        <span class="badge bg-secondary"><i class="fas fa-circle-check me-1"></i>{{ selected.estado|title }}</span>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="row g-4">
+      {% for libro in libros %}
+      <div class="col-md-6 col-lg-4">
+          <div class="card h-100">
+              <div class="position-relative">
+                  {% if libro.portada %}
+                    <img src="{{ libro.portada.url }}" class="card-img-top" alt="Portada de {{ libro.titulo }}">
+                  {% elif libro.portada_url %}
+                    <img src="{{ libro.portada_url }}" class="card-img-top" alt="Portada de {{ libro.titulo }}">
+                  {% else %}
+                    <div class="card-img-top d-flex align-items-center justify-content-center bg-light" style="height: 160px;">
+                      <i class="fas fa-book text-secondary" style="font-size: 2rem;"></i>
+                    </div>
+                  {% endif %}
+                  {% if libro.estado == 'disponible' %}
+                    <span class="badge badge-disponible position-absolute top-0 end-0 m-2">Disponible</span>
+                  {% elif libro.estado == 'prestado' %}
+                    <span class="badge badge-prestado position-absolute top-0 end-0 m-2">Prestado</span>
+                  {% else %}
+                    <span class="badge badge-retrasado position-absolute top-0 end-0 m-2">No disponible</span>
+                  {% endif %}
+              </div>
+              <div class="card-body">
+                  <h5 class="card-title">{{ libro.titulo }}</h5>
+                  <p class="card-subtitle mb-2 text-muted">Por: {{ libro.autor }}</p>
+                  <div class="mb-3">
+                    <span class="badge bg-light text-dark"><i class="fas fa-tag me-1"></i>{{ libro.categoria }}</span>
+                  </div>
+                  <a href="{% url 'libro_detail' libro.pk %}" class="btn custom-btn-outline w-100">Ver Detalles</a>
+              </div>
+          </div>
+      </div>
+      {% empty %}
+      <div class="col-12">
+        <div class="card">
+          <div class="card-body text-center py-5">
+            <div class="mb-2"><i class="fas fa-box-open text-secondary" style="font-size: 2rem;"></i></div>
+            <h5 class="mb-1">Sin resultados</h5>
+            <p class="text-muted mb-3">No encontramos libros que coincidan con tus filtros.</p>
+            <a href="{% url 'libro_list' %}" class="btn custom-btn-outline"><i class="fas fa-broom me-2"></i>Limpiar filtros</a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+  </div>
+</div>
+
+{% endblock %}

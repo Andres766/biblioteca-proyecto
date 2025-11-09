@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="hero-section text-center py-5">
+    <div class="container col-xxl-8 px-4">
+        <div class="row flex-lg-row-reverse align-items-center g-5">
+            <div class="col-10 col-sm-8 col-lg-6 mx-auto">
+                <div class="hero-icon-container">
+                    <i class="fas fa-book-reader"></i>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <h1 class="display-5 fw-bold lh-1 mb-3">Bienvenido a BiblioNexus</h1>
+                <p class="lead mb-4">Tu portal centralizado para descubrir, reservar y gestionar miles de títulos. Explora nuestro catálogo, administra tus préstamos y accede a reportes detallados, todo en un solo lugar.</p>
+                
+                <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                    {% if user.is_authenticated %}
+                        {% if user.rol == 'bibliotecario' %}
+                            <a href="{% url 'dashboard_bibliotecario' %}" class="btn custom-btn-primary btn-lg px-4 me-md-2">
+                                <i class="fas fa-chart-line me-2"></i> Ir al Dashboard
+                            </a>
+                            <a href="{% url 'libro_list' %}" class="btn custom-btn-outline btn-lg px-4">
+                                <i class="fas fa-book-open me-2"></i> Ver Catálogo
+                            </a>
+                        {% else %}
+                            <a href="{% url 'libro_list' %}" class="btn custom-btn-primary btn-lg px-4 me-md-2">
+                                <i class="fas fa-book me-2"></i> Explorar Catálogo
+                            </a>
+                            <a href="{% url 'mis_prestamos' %}" class="btn custom-btn-outline btn-lg px-4">
+                                <i class="fas fa-list-alt me-2"></i> Mis Préstamos
+                            </a>
+                        {% endif %}
+                    {% else %}
+                        <a href="{% url 'login' %}" class="btn custom-btn-primary btn-lg px-4 me-md-2">
+                            <i class="fas fa-sign-in-alt me-2"></i> Iniciar Sesión
+                        </a>
+                        <a href="{% url 'registrar' %}" class="btn custom-btn-outline btn-lg px-4">
+                            <i class="fas fa-user-plus me-2"></i> Registrarse
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container px-4 py-5" id="featured-3">
+    <h2 class="pb-2 border-bottom text-center">Características Principales</h2>
+    <div class="row g-4 py-4 row-cols-1 row-cols-lg-3">
+      <!-- Catálogo -->
+      <div class="feature col">
+        <div class="feature-icon catalogo mb-3 d-inline-flex align-items-center justify-content-center">
+          <i class="fas fa-book-open"></i>
+        </div>
+        <h2 class="mb-2">Catálogo Extenso</h2>
+        <p class="mb-3">Navega, busca y filtra a través de una colección completa de libros. Encuentra lo que necesitas al instante.</p>
+        <a href="{% url 'libro_list' %}" class="icon-link">
+          Ir al catálogo <i class="fas fa-arrow-right-long ms-2"></i>
+        </a>
+      </div>
+
+      <!-- Préstamos -->
+      <div class="feature col">
+        <div class="feature-icon prestamos mb-3 d-inline-flex align-items-center justify-content-center">
+          <i class="fas fa-clipboard-check"></i>
+        </div>
+        <h2 class="mb-2">Gestión de Préstamos</h2>
+        <p class="mb-3">Pide libros prestados con un solo clic y mantén un registro claro de tus fechas de devolución.</p>
+        <a href="{% url 'mis_prestamos' %}" class="icon-link">
+          Ver mis préstamos <i class="fas fa-arrow-right-long ms-2"></i>
+        </a>
+      </div>
+
+      <!-- Administración -->
+      <div class="feature col">
+        <div class="feature-icon administracion mb-3 d-inline-flex align-items-center justify-content-center">
+          <i class="fas fa-chart-pie"></i>
+        </div>
+        <h2 class="mb-2">Administración Total</h2>
+        <p class="mb-3">Para bibliotecarios: un panel de control con gráficos, reportes en PDF/Excel y gestión total del inventario.</p>
+        <a href="{% url 'dashboard_bibliotecario' %}" class="icon-link">
+          Ir al dashboard <i class="fas fa-arrow-right-long ms-2"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="mb-0"><i class="fas fa-bell me-2 text-primary"></i>Mis Reservas</h1>
+    <a href="{% url 'libro_list' %}" class="btn custom-btn-outline"><i class="fas fa-book me-2"></i>Volver al Catálogo</a>
+  </div>
+  <p class="text-secondary">Consulta el estado de tus reservas y su fecha de expiración.</p>
+
+  {% if reservas %}
+    <div class="card">
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-striped table-hover">
+            <thead>
+              <tr>
+                <th>Libro</th>
+                <th>Fecha de Reserva</th>
+                <th>Expira</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for r in reservas %}
+              <tr>
+                <td>{{ r.libro.titulo }}</td>
+                <td>{{ r.fecha_reserva|date:'Y-m-d H:i' }}</td>
+                <td>{{ r.fecha_expiracion|date:'Y-m-d H:i' }}</td>
+                <td>
+                  {% if r.atendida %}
+                    <span class="badge bg-success">Notificado</span>
+                  {% elif r.activa %}
+                    <span class="badge bg-info">Activa</span>
+                  {% else %}
+                    <span class="badge bg-secondary">Expirada</span>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  {% else %}
+    <div class="card">
+      <div class="card-body text-center py-5">
+        <div class="mb-2"><i class="fas fa-bell text-secondary" style="font-size: 2rem;"></i></div>
+        <h5 class="mb-1">No tienes reservas</h5>
+        <p class="text-muted mb-3">Si un libro no está disponible, puedes reservarlo desde su detalle.</p>
+        <a href="{% url 'libro_list' %}" class="btn custom-btn-primary"><i class="fas fa-book me-2"></i>Ir al Catálogo</a>
+      </div>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container py-4">
+  <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+          <h3 class="mb-0"><i class="fas fa-bookmark me-2 text-primary"></i>{{ libro.titulo }}</h3>
+          {% if user.is_authenticated and user.rol == 'bibliotecario' %}
+          <div>
+              <a href="{% url 'libro_update' libro.pk %}" class="btn btn-warning">Editar</a>
+              <a href="{% url 'libro_delete' libro.pk %}" class="btn btn-danger">Eliminar</a>
+          </div>
+          {% endif %}
+      </div>
+      <div class="card-body">
+          <div class="row g-4 align-items-start mb-2">
+            <div class="col-md-4">
+              {% if libro.portada %}
+                <img src="{{ libro.portada.url }}" class="img-fluid rounded border" alt="Portada de {{ libro.titulo }}">
+              {% elif libro.portada_url %}
+                <img src="{{ libro.portada_url }}" class="img-fluid rounded border" alt="Portada de {{ libro.titulo }}">
+              {% else %}
+                <div class="d-flex align-items-center justify-content-center bg-light rounded border" style="height: 220px;">
+                  <i class="fas fa-book text-secondary" style="font-size: 2.5rem;"></i>
+                </div>
+              {% endif %}
+            </div>
+            <div class="col-md-8">
+          {% if user.is_authenticated and user.rol == 'lector' %}
+            {% if usuario_bloqueado %}
+              <div class="alert alert-warning modern-alert mb-3">
+                <i class="fas fa-exclamation-triangle me-2"></i> Tienes sanción activa por retraso. Devuelve tus préstamos para volver a pedir.
+              </div>
+            {% elif libro.estado == 'disponible' %}
+              <div class="alert alert-success modern-alert mb-3">
+                <i class="fas fa-check-circle me-2"></i> Este libro está disponible para préstamo inmediato.
+              </div>
+            {% else %}
+              <div class="alert alert-info modern-alert mb-3">
+                <i class="fas fa-bell me-2"></i> El libro no está disponible ahora. Puedes crear una reserva.
+              </div>
+            {% endif %}
+          {% endif %}
+          <ul class="list-unstyled mb-3">
+              <li class="meta-item mb-1"><i class="fas fa-user-pen me-2"></i><strong>Autor:</strong> {{ libro.autor }}</li>
+              <li class="meta-item mb-1"><i class="fas fa-barcode me-2"></i><strong>ISBN:</strong> {{ libro.isbn }}</li>
+              <li class="meta-item mb-1"><i class="fas fa-tag me-2"></i><strong>Categoría:</strong> {{ libro.categoria }}</li>
+              <li class="meta-item mb-1"><i class="fas fa-circle-check me-2"></i><strong>Estado:</strong>
+                {% if libro.estado == 'disponible' %}
+                  <span class="badge badge-disponible ms-1">Disponible</span>
+                {% elif libro.estado == 'prestado' %}
+                  <span class="badge badge-prestado ms-1">Prestado</span>
+                {% else %}
+                  <span class="badge badge-retrasado ms-1">No disponible</span>
+                {% endif %}
+              </li>
+          </ul>
+
+          <h6 class="mt-3"><i class="fas fa-align-left me-2 text-secondary"></i>Resumen</h6>
+          <p class="mb-0">{{ libro.resumen|default:"No hay resumen disponible." }}</p>
+            </div>
+          </div>
+      </div>
+      <div class="card-footer d-flex justify-content-between align-items-center">
+          <a href="{% url 'libro_list' %}" class="btn custom-btn-outline">Volver al Catálogo</a>
+
+          {% if user.is_authenticated and user.rol == 'lector' %}
+              <div class="d-flex align-items-center gap-2">
+                {% if libro.estado == 'disponible' %}
+                    <form method="post" action="{% url 'prestamo_crear' libro.pk %}" class="m-0">
+                        {% csrf_token %}
+                        <button type="submit" class="btn custom-btn-primary" {% if usuario_bloqueado %}disabled{% endif %}>
+                            <i class="fas fa-hand-holding me-2"></i>Pedir Prestado (14 días)
+                        </button>
+                    </form>
+                    {% if usuario_bloqueado %}
+                      <small class="text-danger">Sanción activa: devuelve para habilitar préstamos.</small>
+                    {% endif %}
+                {% else %}
+                    <form method="post" action="{% url 'reserva_crear' libro.pk %}" class="m-0">
+                        {% csrf_token %}
+                        <button type="submit" class="btn custom-btn-outline">
+                          <i class="fas fa-bell me-2"></i>Reservar cuando esté disponible
+                        </button>
+                    </form>
+                {% endif %}
+              </div>
+          {% endif %}
+      </div>
+  </div>
+</div>
+
+{% endblock %}

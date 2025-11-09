@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container py-4">
+  <div class="mb-4">
+    <h1 class="mb-1"><i class="fas fa-user-graduate me-2 text-primary"></i>Dashboard del Lector</h1>
+    <p class="text-secondary">Bienvenido. Accede rápidamente a tus secciones principales.</p>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-md-6">
+      <div class="card h-100">
+        <div class="card-body d-flex align-items-center justify-content-between">
+          <div>
+            <h5 class="card-title mb-1"><i class="fas fa-book-open me-2 text-primary"></i>Catálogo</h5>
+            <p class="text-secondary mb-2">Explora todos los títulos disponibles.</p>
+            <a href="{% url 'libro_list' %}" class="btn custom-btn-primary">Ir al Catálogo</a>
+          </div>
+          <div class="feature-icon catalogo d-none d-md-flex align-items-center justify-content-center">
+            <i class="fas fa-book-open"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card h-100">
+        <div class="card-body d-flex align-items-center justify-content-between">
+          <div>
+            <h5 class="card-title mb-1"><i class="fas fa-list-alt me-2 text-primary"></i>Mis Préstamos</h5>
+            <p class="text-secondary mb-2">Consulta tu historial y préstamos activos.</p>
+            <a href="{% url 'mis_prestamos' %}" class="btn custom-btn-outline">Ver mis Préstamos</a>
+          </div>
+          <div class="feature-icon prestamos d-none d-md-flex align-items-center justify-content-center">
+            <i class="fas fa-list-alt"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
