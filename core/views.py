@@ -20,7 +20,6 @@ import json
 
 # --- IMPORTACIONES PARA REPORTES ---
 from django.http import HttpResponse
-import pandas as pd
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.units import inch
@@ -342,6 +341,12 @@ class DevolverLibroView(BibliotecarioRequiredMixin, View):
 # --- VISTAS DE REPORTES ---
 @bibliotecario_required
 def exportar_libros_excel(request):
+    # Importación perezosa de pandas para evitar que falle el arranque si no está instalado
+    try:
+        import pandas as pd
+    except ImportError:
+        # Si pandas no está disponible, devolvemos el reporte en CSV como alternativa
+        return exportar_libros_csv(request)
     libros = Libro.objects.all()
     data = {
         'Título': [libro.titulo for libro in libros],
