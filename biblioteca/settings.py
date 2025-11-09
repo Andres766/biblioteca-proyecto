@@ -1,5 +1,6 @@
 # biblioteca/settings.py
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -14,10 +15,15 @@ SECRET_KEY = 'django-insecure-tu-clave-aqui'
 # SECURITY WARNING: don't run with debug turned on in production!
 # --- CORRECCIÓN ---
 # Asegúrate de que esto esté en True para desarrollo local
-DEBUG = True
+DEBUG = True  # se mantiene por defecto para desarrollo
 
 # Si DEBUG es True, ALLOWED_HOSTS puede estar vacío
 ALLOWED_HOSTS = []
+
+# Permitir host externo de Render si está presente
+RENDER_EXTERNAL_HOSTNAME = os.getenv('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS = [RENDER_EXTERNAL_HOSTNAME, '.onrender.com']
 
 
 # Application definition
@@ -40,6 +46,8 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    # WhiteNoise para servir estáticos en producción de forma eficiente
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -115,6 +123,13 @@ STATIC_URL = 'static/'
 
 # --- RUTA DE ESTÁTICOS AÑADIDA ---
 STATICFILES_DIRS = [BASE_DIR / 'static']
+
+# Ruta de recolección de estáticos para producción
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# Activar almacenamiento comprimido/manifest sólo en producción
+if not DEBUG or os.getenv('RENDER'):  # Render establece variables de entorno en prod
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
 # Default primary key field type
