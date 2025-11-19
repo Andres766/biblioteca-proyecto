@@ -28,6 +28,8 @@ from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 
 # --- IMPORTACIÓN PARA CORREO ---
 from django.core.mail import send_mail
+from django.conf import settings
+from django.http import JsonResponse
 
 
 # --- MIXIN DE SEGURIDAD (Para Clases) ---
@@ -79,6 +81,25 @@ class CustomLoginView(LoginView):
 def custom_logout_view(request):
     logout(request)
     return redirect('login') 
+
+# --- Endpoint de salud de Base de Datos (diagnóstico rápido) ---
+def db_health(request):
+    """
+    Verifica conectividad y presencia de tablas clave.
+    Responde 200 si la consulta básica funciona, 500 con detalle del error en caso contrario.
+    """
+    try:
+        # Forzamos una consulta simple contra la tabla de usuarios
+        Usuario.objects.exists()
+        return JsonResponse({
+            'status': 'ok',
+            'engine': settings.DATABASES['default']['ENGINE']
+        }, status=200)
+    except Exception as e:
+        return JsonResponse({
+            'status': 'error',
+            'message': str(e)
+        }, status=500)
 
 # --- Vistas de Dashboards ---
 

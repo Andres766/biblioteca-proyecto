@@ -7,6 +7,8 @@ urlpatterns = [
     path('registrar/', views.RegistrarUsuarioView.as_view(), name='registrar'),
     path('login/', views.CustomLoginView.as_view(), name='login'),
     path('logout/', views.custom_logout_view, name='logout'),
+    # Salud de BD
+    path('health/db/', views.db_health, name='db_health'),
     
     # URLs de Dashboards
     path('dashboard/bibliotecario/', views.DashboardView.as_view(), name='dashboard_bibliotecario'),
