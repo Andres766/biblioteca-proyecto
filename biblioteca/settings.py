@@ -1,6 +1,7 @@
 # biblioteca/settings.py
 from pathlib import Path
 import os
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -86,6 +87,25 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+# Si hay DATABASE_URL (p.ej. usando Postgres gratuito externo), usarla
+DATABASE_URL = os.getenv('DATABASE_URL')
+if DATABASE_URL:
+    DATABASES['default'] = dj_database_url.parse(
+        DATABASE_URL,
+        conn_max_age=600,
+        ssl_require=True,
+    )
+
+# En Render (sin DATABASE_URL), usar SQLite y permitir ruta configurable
+# - Si defines la variable de entorno SQLITE_PATH, se usará directamente.
+# - Si existe el directorio montado '/var/data' (Disk), se guardará en esa ruta.
+SQLITE_PATH = os.getenv('SQLITE_PATH')
+if os.getenv('RENDER') and not DATABASE_URL:
+    if SQLITE_PATH:
+        DATABASES['default']['NAME'] = SQLITE_PATH
+    elif os.path.isdir('/var/data'):
+        DATABASES['default']['NAME'] = '/var/data/db.sqlite3'
 
 
 # Password validation
