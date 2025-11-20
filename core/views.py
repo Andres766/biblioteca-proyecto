@@ -124,6 +124,15 @@ class DashboardView(BibliotecarioRequiredMixin, TemplateView):
         data_libros = [libro.num_prestamos for libro in top_libros]
         context['chart_libros_labels'] = json.dumps(labels_libros)
         context['chart_libros_data'] = json.dumps(data_libros)
+
+        # Nuevo: Top autores por cantidad de préstamos
+        top_autores = Autor.objects.annotate(
+            num_prestamos=Count('libros__prestamos')
+        ).filter(num_prestamos__gt=0).order_by('-num_prestamos')[:5]
+        labels_autores = [f"{a.nombre} {a.apellido}" for a in top_autores]
+        data_autores = [a.num_prestamos for a in top_autores]
+        context['chart_autores_labels'] = json.dumps(labels_autores)
+        context['chart_autores_data'] = json.dumps(data_autores)
         return context
 
 def dashboard_lector(request):
@@ -330,6 +339,8 @@ class DevolverLibroView(BibliotecarioRequiredMixin, View):
         prestamo_pk = self.kwargs.get('prestamo_pk')
         prestamo = Prestamo.objects.get(pk=prestamo_pk)
         prestamo.fecha_devolucion_real = timezone.now()
+        # Si estaba marcado como retrasado manualmente, limpiarlo al devolver
+        prestamo.retraso_manual = False
         prestamo.save()
         prestamo.libro.estado = Libro.ESTADO_DISPONIBLE
         prestamo.libro.save()
@@ -357,6 +368,21 @@ class DevolverLibroView(BibliotecarioRequiredMixin, View):
             reserva.atendida = True
             reserva.save()
         messages.success(request, f'El libro "{prestamo.libro.titulo}" ha sido devuelto.')
+        return redirect('gestion_prestamos')
+
+class MarcarPrestamoRetrasadoView(BibliotecarioRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
+        prestamo_pk = self.kwargs.get('prestamo_pk')
+        prestamo = Prestamo.objects.get(pk=prestamo_pk)
+        if prestamo.fecha_devolucion_real:
+            messages.info(request, 'Este préstamo ya fue devuelto.')
+            return redirect('gestion_prestamos')
+        prestamo.retraso_manual = True
+        prestamo.save()
+        # Reflejar también el estado del libro
+        prestamo.libro.estado = Libro.ESTADO_RETRASADO
+        prestamo.libro.save()
+        messages.success(request, f'Préstamo de "{prestamo.libro.titulo}" marcado como retrasado.')
         return redirect('gestion_prestamos')
 
 # --- VISTAS DE REPORTES ---

@@ -45,6 +45,12 @@
                                     <i class="fas fa-undo me-1"></i> Marcar como Devuelto
                                 </button>
                             </form>
+                            <form method="post" action="{% url 'prestamo_marcar_retrasado' prestamo.pk %}" class="mt-2">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-danger" {% if prestamo.esta_retrasado %}disabled{% endif %}>
+                                    <i class="fas fa-exclamation-triangle me-1"></i> Marcar retrasado
+                                </button>
+                            </form>
                         {% else %}
                             -
                         {% endif %}

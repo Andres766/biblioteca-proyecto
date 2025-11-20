@@ -74,6 +74,8 @@ class Prestamo(models.Model):
     fecha_prestamo = models.DateTimeField(default=timezone.now)
     fecha_devolucion_prevista = models.DateTimeField()
     fecha_devolucion_real = models.DateTimeField(null=True, blank=True)
+    # Permite al bibliotecario marcar retraso manualmente
+    retraso_manual = models.BooleanField(default=False)
     
     def __str__(self):
         return f"Préstamo de '{self.libro.titulo}' a {self.usuario.username}"
@@ -82,7 +84,9 @@ class Prestamo(models.Model):
     def esta_retrasado(self):
         if self.fecha_devolucion_real:
             return False
-        
+        # Si se marcó manualmente, considerar retrasado
+        if self.retraso_manual:
+            return True
         if timezone.now() > self.fecha_devolucion_prevista:
             return True
             

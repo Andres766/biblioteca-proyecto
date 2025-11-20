@@ -26,6 +26,7 @@ urlpatterns = [
     path('prestamos/mis-prestamos/', views.MisPrestamosListView.as_view(), name='mis_prestamos'),
     path('prestamos/gestion/', views.GestionPrestamosListView.as_view(), name='gestion_prestamos'),
     path('prestamos/devolver/<int:prestamo_pk>/', views.DevolverLibroView.as_view(), name='prestamo_devolver'),
+    path('prestamos/marcar-retrasado/<int:prestamo_pk>/', views.MarcarPrestamoRetrasadoView.as_view(), name='prestamo_marcar_retrasado'),
     
     # --- URLs DE REPORTES ---
     path('reportes/libros-excel/', views.exportar_libros_excel, name='reporte_libros_excel'),

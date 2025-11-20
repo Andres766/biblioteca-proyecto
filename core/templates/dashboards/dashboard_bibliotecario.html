@@ -104,6 +104,16 @@
         </div>
       </div>
     </div>
+    <div class="col-md-6">
+      <div class="card chart-card h-100">
+        <div class="card-header">
+          <i class="fas fa-user-pen me-2 text-success"></i>Autor Más Leído (Top 5)
+        </div>
+        <div class="card-body">
+          <canvas id="chartTopAutores"></canvas>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -116,6 +126,8 @@
     
     const labelsLibros = JSON.parse('{{ chart_libros_labels|escapejs }}');
     const dataLibros = JSON.parse('{{ chart_libros_data|escapejs }}');
+    const labelsAutores = JSON.parse('{{ chart_autores_labels|escapejs }}');
+    const dataAutores = JSON.parse('{{ chart_autores_data|escapejs }}');
 
     // Gráfico 1: Préstamos por Mes (Gráfico de Barras)
     const ctx1 = document.getElementById('chartPrestamosMes').getContext('2d');
@@ -160,6 +172,29 @@
             }]
         },
         options: {
+            responsive: true
+        }
+    });
+
+    // Gráfico 3: Top Autores (Barras horizontales)
+    const ctx3 = document.getElementById('chartTopAutores').getContext('2d');
+    new Chart(ctx3, {
+        type: 'bar',
+        data: {
+            labels: labelsAutores,
+            datasets: [{
+                label: 'Nº de Préstamos',
+                data: dataAutores,
+                backgroundColor: 'rgba(40, 167, 69, 0.6)',
+                borderColor: 'rgba(40, 167, 69, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            scales: {
+                x: { beginAtZero: true }
+            },
             responsive: true
         }
     });
