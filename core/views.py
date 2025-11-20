@@ -210,13 +210,13 @@ class AutorListView(BibliotecarioRequiredMixin, ListView):
 
 class AutorCreateView(BibliotecarioRequiredMixin, CreateView):
     model = Autor
-    fields = ['nombre']
+    fields = ['nombre', 'apellido']
     template_name = 'core/autor_form.html'
     success_url = reverse_lazy('autor_list')
 
 class AutorUpdateView(BibliotecarioRequiredMixin, UpdateView):
     model = Autor
-    fields = ['nombre']
+    fields = ['nombre', 'apellido']
     template_name = 'core/autor_form.html'
     success_url = reverse_lazy('autor_list')
 

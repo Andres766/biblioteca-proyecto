@@ -26,22 +26,37 @@ class CustomAuthenticationForm(AuthenticationForm):
     username = forms.CharField(label="Usuario o Email")
 
     def clean(self):
-        cleaned = super().clean()
+        # Validación personalizada para permitir login por email o username
         username_input = self.cleaned_data.get('username')
         password = self.cleaned_data.get('password')
 
-        # Si el usuario escribió un email, intenta resolver el username real
-        if username_input and '@' in username_input:
+        if not username_input or not password:
+            # Si faltan datos, delega en la validación estándar para mostrar errores de campos
+            return super().clean()
+
+        # Resolver el username real si se ingresó un email
+        username_to_use = username_input
+        if '@' in username_input:
             User = get_user_model()
             try:
                 user_obj = User.objects.get(email=username_input)
-                # Sustituir por el username real para el backend estándar
-                self.cleaned_data['username'] = user_obj.username
+                username_to_use = user_obj.username
             except User.DoesNotExist:
-                # Mantener datos tal cual; el flujo estándar mostrará error
-                pass
+                # Si el email no existe, intentar con el input tal cual
+                username_to_use = username_input
 
-        return cleaned
+        from django.contrib.auth import authenticate
+        user = authenticate(self.request, username=username_to_use, password=password)
+        if user is None:
+            raise forms.ValidationError(
+                self.error_messages['invalid_login'],
+                code='invalid_login',
+                params={'username': self.fields['username'].label},
+            )
+
+        self.confirm_login_allowed(user)
+        self.user_cache = user
+        return self.cleaned_data
 
 class LibroForm(forms.ModelForm):
     """
